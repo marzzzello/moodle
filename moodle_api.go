@@ -21,7 +21,7 @@
 //                // Do something
 //        }
 //
-package moodle
+package moodleAPI
 
 import (
 	"bytes"

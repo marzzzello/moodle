@@ -1,1 +1,3 @@
-module github.com/zaddok/moodle
+module github.com/marzzzello/moodleAPI
+
+go 1.12

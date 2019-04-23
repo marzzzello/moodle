@@ -1,4 +1,4 @@
-package moodle
+package moodleAPI
 
 import (
 	"errors"

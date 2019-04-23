@@ -1,13 +1,14 @@
 // +build appengine
 
-package moodle
+package moodleAPI
 
 import (
 	"context"
 	"errors"
-	"google.golang.org/appengine/urlfetch"
 	"io/ioutil"
 	"strings"
+
+	"google.golang.org/appengine/urlfetch"
 )
 
 type GoogleLookupUrl struct {
