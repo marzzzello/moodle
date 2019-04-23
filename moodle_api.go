@@ -88,6 +88,65 @@ type Course struct {
 	End         *time.Time    `json:",omitempty"`
 }
 
+type Section struct {
+	SectionId int64     `json:"id,omitempty"`
+	SectionNr int64     `json:"section,omitempty"`
+	Name      string    `json:"name,omitempty"`
+	Visible   int64     `json:"visible,omitempty"`
+	Summary   string    `json:"summary,omitempty"`
+	Modules   []*Module `json:"modules,omitempty"`
+}
+
+type Module struct {
+	ModuleId  int64      `json:"id,omitempty"`
+	URL       string     `json:"url,omitempty"`
+	Name      string     `json:"name,omitempty"`
+	Instance  int64      `json:"instance,omitempty"`
+	Summary   string     `json:"summary,omitempty"`
+	ModName   string     `json:"modname,omitempty"`
+	ModPlural string     `json:"modplural,omitempty"`
+	Contents  []*Content `json:"contents,omitempty"`
+}
+
+type Content struct {
+	Type      string     `json:"type,omitempty"`
+	Filename  string     `json:"filename,omitempty"`
+	Filepath  string     `json:"filepath,omitempty"`
+	Filesize  int64      `json:"filesize,omitempty"`
+	Fileurl   string     `json:"fileurl,omitempty"`
+	Created   *time.Time //"timecreated": 1542208897
+	Modified  *time.Time //"timemodified": 1542208899
+	Sortorder int64      `json:"sortorder,omitempty"`
+	Mimetype  string     `json:"mimetype,omitempty"`
+	External  bool       `json:"isexternalfile,omitempty"`
+	UserId    int64      `json:"userid,omitempty"`
+	Author    string     `json:"author,omitempty"`
+	License   string     `json:"license,omitempty"`
+}
+
+func (m *MoodleApi) GetCourseContents(courseId int64) (*[]Section, error) {
+	url := fmt.Sprintf("%swebservice/rest/server.php?wstoken=%s&wsfunction=%s&moodlewsrestformat=json&courseid=%d", m.base, m.token, "core_course_get_contents", courseId)
+	m.log.Debug("Fetch: %s", url)
+	body, _, _, err := m.fetch.GetUrl(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.HasPrefix(body, "{\"exception\":\"") {
+		message := readError(body)
+		return nil, errors.New(message + ". " + url)
+	}
+
+	var results []Section
+
+	if err := json.Unmarshal([]byte(body), &results); err != nil {
+		return nil, errors.New("Server returned unexpected response. " + err.Error())
+	}
+
+	return &results, nil
+}
+
 type Person struct {
 	MoodleId             int64  `json:",omitempty"`
 	Username             string `json:",omitempty"`
